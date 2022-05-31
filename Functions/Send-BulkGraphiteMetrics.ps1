@@ -76,13 +76,16 @@ function Send-BulkGraphiteMetrics
     }
 
     # Create Send-To-Graphite Metric
-    [string[]]$metricStrings = @()
+    $metricStringsArrayList = [System.Collections.ArrayList]@()
     foreach ($key in $Metrics.Keys)
     {
-        $metricStrings += $key + " " + $Metrics[$key] + " " + $UnixTime
+        $metricStringsArrayList.Add($key + " " + $Metrics[$key] + " " + $UnixTime) | Out-Null
 
-        Write-Verbose ("Metric Received: " + $metricStrings[-1])
+        Write-Verbose ("Metric Received: " + $metricStringsArrayList[-1])
     }
+
+    # Convert arraylist to string array
+    $metricStrings = $metricStringsArrayList.ToArray([string])
 
     $sendMetricsParams = @{
         "CarbonServer" = $CarbonServer
